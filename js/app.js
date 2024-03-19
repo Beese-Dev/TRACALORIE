@@ -116,20 +116,37 @@ class App {
     this._tracker = new CalorieTracker();
     document
       .getElementById('meal-form')
-      .addEventListener('submit', this._newMeal.bind(this));
+      .addEventListener('submit', this._newItem.bind(this, 'meal'));
+    document
+      .getElementById('workout-form')
+      .addEventListener('submit', this._newItem.bind(this, 'workout'));
   }
 
-  _newMeal(e) {
+  _newItem(type, e) {
     e.preventDefault();
 
-    const name = document.getElementById('meal-name');
-    const calories = document.getElementById('meal-calories');
+    const name = document.getElementById(`${type}-name`);
+    const calories = document.getElementById(`${type}-calories`);
 
     if (name.value === '' || calories.value === '') {
-      alert('Please Enter Meal Name or Calories');
+      alert('Please Enter Meal/Workout Name and Calories');
       return;
-    } else {
     }
+
+    if (type === 'meal') {
+      const meal = new Meal(name.value, +calories.value);
+      this._tracker.addMeal(meal);
+    } else {
+      const workout = new Workout(name.value, +calories.value);
+      this._tracker.addWorkout(workout);
+    }
+    name.value = '';
+    calories.value = '';
+
+    const collapseItem = document.getElementById(`collapse-${type}`);
+    const bsCollapse = new bootstrap.Collapse(collapseItem, {
+      toggle: true,
+    });
   }
 }
 
